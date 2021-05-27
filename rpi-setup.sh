@@ -1,5 +1,3 @@
-!#/bin/sh
-sudo su
 echo "#### STEP 1 : UPDATE ####"
 sudo apt-get update && sudo apt-get upgrade
 
@@ -41,18 +39,24 @@ Plugin {
 }
 END
 
-echo "#### STEP 4 : CLONING AP ####"
+echo "#### STEP 4 : CREATING AP ####"
 sudo apt-get install hostapd dnsmasq -y
 git clone https://github.com/oblique/create_ap
 cd create_ap
 make install
+head
+
+echo "#### STEP 5 : WRITING AP TO STARTUP ####"
+temp_str=`head -n -1 /etc/rc.local`
+sudo cat << END >> /etc/rc.local
+$temp_str
+create_ap wlan1 wlan0 RPI-IoT-Router huehuehue &
+exit 0
+END
 
 echo "#### DONE! ####"
 echo "
 Try to run : 
- create_ap wlan0 wlan0 MyAccessPoint MyPassPhrase
- systemctl start create_ap
- systemctl enable create_ap
-
+ create_ap wlan1 wlan0 RPI-IoT-Router huehuehue
 README https://github.com/oblique/create_ap"
-#sudo reboot
+
